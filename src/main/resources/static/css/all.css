@@ -1,0 +1,51 @@
+
+label{
+    width: 260px;
+    display: inline-block;
+    text-align: right;
+}
+div{
+    text-align: center;
+    height: 40px;
+}
+div.input_box label{
+    color: black;
+}
+div.input_box input{
+    border: none;
+    border-bottom: 1px solid grey;
+    outline: none;
+}
+div.button input{
+    /*去点击效果*/
+    border: none;
+
+    background-color: deepskyblue;
+
+    /*圆角效果*/
+    width: 100px;
+    height: 45px;
+    border-radius: 6px;
+}
+div.button input:hover{
+    /*去点击效果*/
+    border: none;
+
+    background-color: lightskyblue;
+
+    /*圆角效果*/
+    width: 100px;
+    height: 45px;
+    border-radius: 6px;
+}
+div.button input:active{
+    /*去点击效果*/
+    border: none;
+
+    background-color: lightblue;
+
+    /*圆角效果*/
+    width: 100px;
+    height: 45px;
+    border-radius: 6px;
+}
