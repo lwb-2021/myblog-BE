@@ -88,26 +88,7 @@ public class UserController {
         Assert.notNull(user, "用户不存在");
         return Result.succeed(0, "获取成功", user);
     }
-    @RequiresRoles("admin")
-    @RequestMapping("/lock")
-    public Result<?> lockById(@RequestBody HashMap<String, String> requestMap){
-        Long id = Long.parseLong(requestMap.get("id"));
-        Assert.notNull(id, "id不能为空");
-        User user = userService.getById(id);
-        user.setState(1);
-        userService.saveOrUpdate(user);
-        return Result.succeed(0, "锁定成功", user);
-    }
-    @RequestMapping("/unlock")
-    @RequiresRoles("admin")
-    public Result<?> unlockById(@RequestBody HashMap<String, String> requestMap){
-        Long id = Long.parseLong(requestMap.get("id"));
-        Assert.notNull(id, "id不能为空");
-        User user = userService.getById(id);
-        user.setState(0);
-        userService.saveOrUpdate(user);
-        return Result.succeed(0, "解锁成功", user);
-    }
+
     public Result<?> login_from_user_center_valid(@Valid User user, HttpServletResponse response){
         if(user.getState() == 1){
             response.setStatus(400);
