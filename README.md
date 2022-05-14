@@ -1,7 +1,7 @@
 ### 本项目前后端分离，前端项目位于https://gitee.com/lwb-2021/myblog-FE
 请这样配置application.yml
 
-```
+``` yaml
 lwb2021:
     jwt:
         secret: f4e2e52034348f86b67cde581c0f9eb5
