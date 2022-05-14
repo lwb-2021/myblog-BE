@@ -13,6 +13,7 @@ public class Result <T>{
     -102 账号已存在（注册失败）
     -103 账号等级不足
     -104 账号未登录
+    -105 账号已锁定
 
     -400 客户端参数错误
     -401 意外空值
@@ -31,9 +32,9 @@ public class Result <T>{
         this.data = data;
     }
     public static <T> Result<T> succeed(int code, String message, T data){
-        return new Result<T>(code, true , message, data);
+        return new Result<>(code, true, message, data);
     }
     public static <T> Result<T> failed(int code, String message, T data){
-        return new Result<T>(code, false , message, data);
+        return new Result<>(code, false, message, data);
     }
 }

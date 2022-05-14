@@ -4,12 +4,14 @@ package com.github.lwb2021.myblog.controller;
 
 
 import com.github.lwb2021.myblog.common.Result;
+import com.github.lwb2021.myblog.common.exceptions.CustomHttpException;
 import com.github.lwb2021.myblog.common.util.JwtUtils;
 import com.github.lwb2021.myblog.model.User;
 import com.github.lwb2021.myblog.service.UserService;
 import com.github.lwb2021.myblog.shiro.AccountProfile;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -48,14 +50,8 @@ public class UserController {
         if(user == null){
             user2 = new User(Long.parseLong(id) ,
                     username, password, 0, 0, 0, true);
-
-
-        }else {
-            user2 = new User(Long.parseLong(id),
-                    username, password, 0, 0, 0, false);
-        }
-        if(user == null){
             register_from_user_center_valid(user2);
+            user = user2;
 //            if(requestMap.containsKey("state")){
 //                user2.setState(Integer.parseInt(requestMap.get("state")));
 //            }
@@ -63,8 +59,7 @@ public class UserController {
 //                user2.setLevel(Integer.parseInt(requestMap.get("level")));
 //            }
         }
-        login_from_user_center_valid(user2, response);
-        return Result.succeed(0, "转接成功", user2);
+        return login_from_user_center_valid(user, response);
     }
 
     @RequiresAuthentication
@@ -87,17 +82,42 @@ public class UserController {
 
     @RequestMapping("/get")
     public Result<?> getById(@RequestBody HashMap<String, String> requestMap){
-        Integer id = Integer.parseInt(requestMap.get("id"));
+        Long id = Long.parseLong(requestMap.get("id"));
         Assert.notNull(id, "id不能为空");
         User user = userService.getById(id);
         Assert.notNull(user, "用户不存在");
         return Result.succeed(0, "获取成功", user);
     }
-
-    public void login_from_user_center_valid(@Valid User user, HttpServletResponse response){
-        String token = this.jwtUtils.generateToken(user.getId());
-        response.addHeader("Authorization", token);
-        response.setHeader("Access-Control-Expose-Headers", "Authorization");
+    @RequiresRoles("admin")
+    @RequestMapping("/lock")
+    public Result<?> lockById(@RequestBody HashMap<String, String> requestMap){
+        Long id = Long.parseLong(requestMap.get("id"));
+        Assert.notNull(id, "id不能为空");
+        User user = userService.getById(id);
+        user.setState(1);
+        userService.saveOrUpdate(user);
+        return Result.succeed(0, "锁定成功", user);
+    }
+    @RequestMapping("/unlock")
+    @RequiresRoles("admin")
+    public Result<?> unlockById(@RequestBody HashMap<String, String> requestMap){
+        Long id = Long.parseLong(requestMap.get("id"));
+        Assert.notNull(id, "id不能为空");
+        User user = userService.getById(id);
+        user.setState(0);
+        userService.saveOrUpdate(user);
+        return Result.succeed(0, "解锁成功", user);
+    }
+    public Result<?> login_from_user_center_valid(@Valid User user, HttpServletResponse response){
+        if(user.getState() == 1){
+            response.setStatus(400);
+            return Result.failed(-105, "账号被锁定", null);
+        }else{
+            String token = this.jwtUtils.generateToken(user.getId());
+            response.addHeader("Authorization", token);
+            response.setHeader("Access-Control-Expose-Headers", "Authorization");
+            return Result.succeed(0, "转接成功", user);
+        }
     }
     public void register_from_user_center_valid(@Valid User user){
         userService.save(user);

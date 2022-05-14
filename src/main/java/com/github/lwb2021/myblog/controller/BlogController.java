@@ -145,7 +145,7 @@ public class BlogController {
     @RequiresAuthentication
     @RequestMapping(value = "/delete")
     public Result<?> deleteBlog(@RequestBody HashMap<String, String> requestMap){
-        Integer blogId = Integer.parseInt(requestMap.get("blogId"));
+        Integer blogId = Integer.parseInt(requestMap.get("id"));
 
         Blog blog = getBlogById(blogId);
         log.debug("Parameters Are OK, Finding User");

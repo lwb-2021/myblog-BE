@@ -36,6 +36,8 @@ public class User {
     @TableField("last_login")
     private Date lastLogin;
 
+    private int role;
+
     public User(){}
 
     public User(long id, String username, String avatar, Integer level, Integer points, Integer state, boolean create) {
@@ -45,6 +47,7 @@ public class User {
         this.level = level;
         this.points = points;
         this.state = state;
+        this.role = 0;
         if(create){
             this.created = new Date();
         }

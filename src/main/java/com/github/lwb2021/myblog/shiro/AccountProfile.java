@@ -13,4 +13,6 @@ public class AccountProfile {
 
     private String email;
 
+    private int role;
+
 }

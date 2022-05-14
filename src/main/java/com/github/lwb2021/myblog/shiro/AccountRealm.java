@@ -6,10 +6,14 @@ import com.github.lwb2021.myblog.model.User;
 import com.github.lwb2021.myblog.service.UserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class AccountRealm extends AuthorizingRealm {
@@ -21,7 +25,15 @@ public class AccountRealm extends AuthorizingRealm {
     }
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return null;
+        AccountProfile profile = (AccountProfile) principals.getPrimaryPrincipal();
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        Set<String> roles = new HashSet<>();
+        if(profile.getRole() >= 2){
+            roles.add("admin");
+        }
+        authorizationInfo.setRoles(roles);
+        Set<String> permissionNames = new HashSet<>();
+        return authorizationInfo;
     }
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
@@ -31,7 +43,7 @@ public class AccountRealm extends AuthorizingRealm {
         if(user == null) {
             throw new UnknownAccountException("账户不存在！");
         }
-        if(user.getState() == -1) {
+        if(user.getState() == 1) {
             throw new LockedAccountException("账户已被锁定！");
         }
         AccountProfile profile = new AccountProfile();
