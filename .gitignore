@@ -33,3 +33,6 @@ out/
 
 test\
 /src/main/resources/application.yml
+application-prod.yml
+application-default.yml
+docker-compose.yml
