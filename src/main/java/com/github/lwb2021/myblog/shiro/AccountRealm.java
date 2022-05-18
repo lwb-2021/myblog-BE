@@ -46,8 +46,7 @@ public class AccountRealm extends AuthorizingRealm {
         if(user.getState() == 1) {
             throw new LockedAccountException("账户已被锁定！");
         }
-        AccountProfile profile = new AccountProfile();
-        BeanUtil.copyProperties(user, profile);
+        AccountProfile profile = new AccountProfile(user);
         return new SimpleAuthenticationInfo(profile, jwt.getCredentials(), getName());
     }
     @Autowired

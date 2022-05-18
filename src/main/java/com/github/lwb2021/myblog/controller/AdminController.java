@@ -63,6 +63,17 @@ public class AdminController {
         return Result.succeed(0, "查询成功", ipage);
     }
 
+    @RequestMapping("/total")
+    public Result<?> total(@RequestParam(defaultValue ="") String keywords){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        if(!keywords.equals("")){
+            for(String keyword : keywords.split(" ")){
+                wrapper.like("title", keyword).or().like("content", keyword);
+            }
+        }
+        return Result.succeed(0, "查询成功", userService.count(wrapper));
+    }
+
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
