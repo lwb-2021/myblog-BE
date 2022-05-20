@@ -2,6 +2,7 @@ package com.github.lwb2021.myblog.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import lombok.Data;
@@ -48,6 +49,9 @@ public class Account implements Serializable {
 
 
     private Integer state;
+
+    @TableLogic
+    private Integer deleted;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

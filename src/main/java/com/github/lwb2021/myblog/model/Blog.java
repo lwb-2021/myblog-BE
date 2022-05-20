@@ -33,6 +33,9 @@ public class Blog{
 
     private String content;
 
+    @TableLogic
+    private Integer deleted;
+
     public Blog(){}
 
     public Blog(String title, Long authorId, Integer likeNumber, Date created, Integer visit,

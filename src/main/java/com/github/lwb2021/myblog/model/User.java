@@ -3,6 +3,7 @@ package com.github.lwb2021.myblog.model;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -37,6 +38,9 @@ public class User {
     private Date lastLogin;
 
     private int role;
+
+    @TableLogic
+    private Integer deleted;
 
     public User(){}
 

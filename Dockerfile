@@ -1,8 +1,10 @@
 FROM centos
 
-ADD jdk-11_linux-x64_bin.tar /usr/local/
+ADD jdk-11.0.2 /usr/local/
 
-ENV JAVA_HOME /usr/local/jdk-11
+ADD my-blog-0.0.1-SNAPSHOT.jar /app.jar
+
+ENV JAVA_HOME /usr/local/jdk-11.0.2
 ENV PATH=$JAVA_HOME/bin:$PATH
 
 VOLUME /root/my_blog_server_docker/file
