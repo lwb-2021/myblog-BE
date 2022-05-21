@@ -4,14 +4,12 @@ package com.github.lwb2021.myblog.controller;
 
 
 import com.github.lwb2021.myblog.common.Result;
-import com.github.lwb2021.myblog.common.exceptions.CustomHttpException;
 import com.github.lwb2021.myblog.common.util.JwtUtils;
 import com.github.lwb2021.myblog.model.User;
 import com.github.lwb2021.myblog.service.UserService;
 import com.github.lwb2021.myblog.shiro.AccountProfile;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -45,11 +43,12 @@ public class UserController {
         Assert.notNull(id, "id不能为空");
         Assert.notNull(username, "username不能为空");
         Assert.notNull(password, "password不能为空");
+        // TODO: uuid操作验证
         User user = userService.getById(Long.valueOf(id));
         User user2;
         if(user == null){
             user2 = new User(Long.parseLong(id) ,
-                    username, password, 0, 0, 0, true);
+                    username, "/image/default_avatar.png", 0, 0, 0, true);
             register_from_user_center_valid(user2);
             user = user2;
 //            if(requestMap.containsKey("state")){

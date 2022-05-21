@@ -4,7 +4,9 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 /**
@@ -14,12 +16,16 @@ import javax.validation.constraints.NotEmpty;
  * @since 2022-05-04 11:42:19
  */
 @TableName("blogs")
+@Data
 public class Blog{
-    @TableId(value="id", type= IdType.AUTO)
+    @TableId(value="id", type=IdType.AUTO)
     private Integer id;
 
-    @NotEmpty(message = "标题不能为空")
+    @NotBlank(message = "标题不能为空")
     private String title;
+
+    @NotBlank(message = "标签不能为空")
+    private String tags;
 
     @NotEmpty(message = "作者不能为空")
     private Long authorId;
@@ -38,7 +44,7 @@ public class Blog{
 
     public Blog(){}
 
-    public Blog(String title, Long authorId, Integer likeNumber, Date created, Integer visit,
+    public Blog(String title, String tags, Long authorId, Integer likeNumber, Date created, Integer visit,
                 String content) {
         this.title = title;
         this.authorId = authorId;
@@ -48,60 +54,5 @@ public class Blog{
         this.content = content;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Long getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(Long authorId) {
-        this.authorId = authorId;
-    }
-
-    public Integer getLikeNumber() {
-        return likeNumber;
-    }
-
-    public void setLikeNumber(Integer likeNumber) {
-        this.likeNumber = likeNumber;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public Integer getVisit() {
-        return visit;
-    }
-
-    public void setVisit(Integer visit) {
-        this.visit = visit;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getContent() {
-        return content;
-    }
 }
 

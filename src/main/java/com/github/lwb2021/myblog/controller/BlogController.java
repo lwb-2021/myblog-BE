@@ -53,13 +53,17 @@ public class BlogController {
     @RequestMapping(value = "/list")
     public Result<?> list(@RequestParam(defaultValue = "1") Integer currentPage,
                        @RequestParam(defaultValue = "10") Integer pageSize,
-                        @RequestParam(defaultValue ="") String keywords){
+                        @RequestParam(defaultValue = "") String keywords,
+                        @RequestParam(defaultValue = "") String tags){
         Page<Blog> page = new Page<>(currentPage, pageSize);
         QueryWrapper<Blog> wrapper = new QueryWrapper<>();
-        if(!keywords.equals("")){
+        if(!keywords.isBlank()){
             for(String keyword : keywords.split(" ")){
                 wrapper.like("title", keyword).or().like("content", keyword);
             }
+        }
+        if(!tags.isBlank()){
+            wrapper.like("tags", tags);
         }
         wrapper.orderByAsc("created");
         IPage<Blog> ipage = blogService.page(page, wrapper);
@@ -82,6 +86,7 @@ public class BlogController {
     public Result<?> createBlog(@RequestBody HashMap<String, String> requestMap){
         String newTitle = requestMap.get("newTitle");
         String newBlogContent = requestMap.get("newBlogContent");
+        String tags = requestMap.get("tags");
 
         Assert.notNull(newTitle, "title不能为空");
         Assert.notNull(newBlogContent, "blogContent不能为空");
@@ -100,7 +105,7 @@ public class BlogController {
 
         Assert.isNull(blogService.getOne(blogQueryWrapper, false), "请勿编写相同题目的博客");
 
-        Blog blog = new Blog(newTitle, profile.getId(), 0, new Date(), 0, newBlogContent);
+        Blog blog = new Blog(newTitle, tags, profile.getId(), 0, new Date(), 0, newBlogContent);
         blogService.save(blog);
 
         return Result.succeed(1, "上传成功", blog);
@@ -110,11 +115,14 @@ public class BlogController {
     public Result<?> editBlog(@RequestBody HashMap<String, String> requestMap){
         String newBlogContent = requestMap.get("newBlogContent");
         String newTitle = requestMap.get("newTitle");
+        String tags = requestMap.get("tags");
         Integer blogId = Integer.parseInt(requestMap.get("blogId"));
         Assert.notNull(newBlogContent, "newBlogContent不能为空");
         Assert.isTrue(!newBlogContent.trim().isEmpty(), "newBlogContent不能为空");
         Assert.notNull(newTitle, "newTitle不能为空");
         Assert.isTrue(!newTitle.trim().isEmpty(), "newTitle不能为空");
+        Assert.notNull(tags, "tags不能为空");
+        Assert.isTrue(!tags.trim().isEmpty(), "tags不能为空");
         Blog blog = getBlogById(blogId);
 
         log.debug("Parameters Are OK, Finding User");
@@ -122,9 +130,9 @@ public class BlogController {
         if ((result = checkIsAuthor(blog, "您不是博客的作者，无法修改")) != null) {
             return result;
         }
-
         blog.setContent(newBlogContent);
         blog.setTitle(newTitle);
+        blog.setTags(tags);
         blogService.saveOrUpdate(blog);
 
         return Result.succeed(1, "修改成功", blog);
