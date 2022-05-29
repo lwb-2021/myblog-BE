@@ -1,16 +1,18 @@
 package com.github.lwb2021.myblog.controller;
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.lwb2021.myblog.common.Result;
 import com.github.lwb2021.myblog.model.Blog;
+import com.github.lwb2021.myblog.model.User;
 import com.github.lwb2021.myblog.service.BlogService;
-import com.github.lwb2021.myblog.shiro.AccountProfile;
+import com.github.lwb2021.myblog.common.AccountProfile;
+import com.github.lwb2021.myblog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,11 +34,17 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/blog")
 public class BlogController {
-    BlogService blogService;
+    private BlogService blogService;
+    private UserService userService;
 
     @Autowired
     public void setBlogService(BlogService blogService) {
         this.blogService = blogService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
     }
 
     @RequestMapping("/total")
@@ -81,7 +89,7 @@ public class BlogController {
         return blog;
     }
 
-    @RequiresAuthentication
+//    @RequiresAuthentication
     @RequestMapping(value = "/create")
     public Result<?> createBlog(@RequestBody HashMap<String, String> requestMap){
         String newTitle = requestMap.get("newTitle");
@@ -96,21 +104,20 @@ public class BlogController {
 
         log.debug("Parameters Are OK, Finding User");
 
-        AccountProfile profile = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        Assert.notNull(profile, "用户未登录");
-        log.info("User Found, ID:" + profile.getId() + " Name:" + profile.getUsername());
+        long id = StpUtil.getLoginIdAsLong();
+        log.info("User Found, ID:" + id);
 
         QueryWrapper<Blog> blogQueryWrapper = new QueryWrapper<>();
         blogQueryWrapper.eq("title", newTitle);
 
         Assert.isNull(blogService.getOne(blogQueryWrapper, false), "请勿编写相同题目的博客");
 
-        Blog blog = new Blog(newTitle, tags, profile.getId(), 0, new Date(), 0, newBlogContent);
+        Blog blog = new Blog(newTitle, tags, id, 0, new Date(), 0, newBlogContent);
         blogService.save(blog);
 
         return Result.succeed(1, "上传成功", blog);
     }
-    @RequiresAuthentication
+//    @RequiresAuthentication
     @RequestMapping(value = "/edit")
     public Result<?> editBlog(@RequestBody HashMap<String, String> requestMap){
         String newBlogContent = requestMap.get("newBlogContent");
@@ -139,18 +146,16 @@ public class BlogController {
     }
 
     public Result<?> checkIsAuthor(Blog blog, String message){
-        AccountProfile profile = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        if(profile == null){
-            return Result.failed(-104, "账号未登录", null);
-        }
-        log.info("User Found, ID:" + profile.getId() + " Name:" + profile.getUsername());
 
-        if(!profile.getId().equals(blog.getAuthorId())){
+        long id = StpUtil.getLoginIdAsLong();
+        log.info("User Found, ID:" + id);
+
+        if(id != blog.getAuthorId()){
             return Result.failed(-100, message, null);
         }
         return null;
     }
-    @RequiresAuthentication
+//    @RequiresAuthentication
     @RequestMapping(value = "/delete")
     public Result<?> deleteBlog(@RequestBody HashMap<String, String> requestMap){
         Integer blogId = Integer.parseInt(requestMap.get("id"));

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.github.lwb2021'
-version = '0.1.0-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
 configurations {
     developmentOnly
@@ -23,30 +23,33 @@ repositories {
     maven{url "https://maven.aliyun.com/repository/gradle-plugin"}
     maven{url "https://maven.aliyun.com/repository/spring"}
     maven{url "https://maven.aliyun.com/repository/spring-plugin"}
+    mavenCentral()
 }
 
 dependencies {
-    implementation group: 'org.crazycake', name: 'shiro-redis-spring-boot-starter', version: '3.3.1'
-    implementation 'javax.xml.bind:jaxb-api:2.3.1'
-    implementation group: 'com.baomidou', name: 'dynamic-datasource-spring-boot-starter', version: '3.5.1'
-    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '8.0.0.Alpha3'
-    implementation group: 'cn.hutool', name: 'hutool-all', version: '5.8.0.M4'
-    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-freemarker'
-    implementation 'com.baomidou:mybatis-plus-boot-starter:3.4.2'
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
-    implementation 'org.jetbrains:annotations:20.1.0'
+
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.1'
+
+    implementation "cn.dev33:sa-token-spring-boot-starter:1.30.0"
+    implementation "cn.dev33:sa-token-jwt:1.30.0"
+    implementation "cn.dev33:sa-token-dao-redis-jackson:1.30.0"
+    implementation "cn.dev33:sa-token-alone-redis:1.30.0"
+    implementation "cn.dev33:sa-token-sso:1.30.0"
+    implementation "cn.dev33:sa-token-oauth2:1.30.0"
+
+    implementation 'org.apache.commons:commons-pool2:2.11.1'
     compileOnly 'org.projectlombok:lombok'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation 'com.baomidou:mybatis-plus-generator:3.5.2'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-
     }
     testImplementation 'junit:junit'
 }

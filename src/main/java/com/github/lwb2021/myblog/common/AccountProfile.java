@@ -1,4 +1,4 @@
-package com.github.lwb2021.myblog.shiro;
+package com.github.lwb2021.myblog.common;
 
 import com.github.lwb2021.myblog.model.User;
 import lombok.Data;
