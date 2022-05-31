@@ -6,7 +6,6 @@ package com.github.lwb2021.myblog.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.github.lwb2021.myblog.common.Result;
-import com.github.lwb2021.myblog.common.util.JwtUtils;
 import com.github.lwb2021.myblog.model.Account;
 import com.github.lwb2021.myblog.model.User;
 import com.github.lwb2021.myblog.service.AccountService;
@@ -58,6 +57,12 @@ public class UserCenterController {
             userService.save(user);
         }
         return SaResult.get(200, "登录成功", user);
+    }
+
+    @RequestMapping("/logout")
+    public SaResult logout(){
+        StpUtil.logout();
+        return SaResult.ok("登出成功");
     }
 
     @RequestMapping("/verify")

@@ -1,13 +1,13 @@
 package com.github.lwb2021.myblog.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.lwb2021.myblog.common.Result;
-import com.github.lwb2021.myblog.common.util.JwtUtils;
 import com.github.lwb2021.myblog.model.User;
 import com.github.lwb2021.myblog.service.UserService;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,9 +23,8 @@ public class AdminController {
 
 
     private UserService userService;
-    private JwtUtils jwtUtils;
 
-    @RequiresRoles("admin")
+    @SaCheckRole("admin")
     @RequestMapping("/lock")
     public Result<?> lockById(@RequestBody HashMap<String, String> requestMap){
         Long id = Long.parseLong(requestMap.get("id"));
@@ -36,7 +35,7 @@ public class AdminController {
         return Result.succeed(0, "锁定成功", user);
     }
     @RequestMapping("/unlock")
-    @RequiresRoles("admin")
+    @SaCheckRole("admin")
     public Result<?> unlockById(@RequestBody HashMap<String, String> requestMap){
         Long id = Long.parseLong(requestMap.get("id"));
         Assert.notNull(id, "id不能为空");
@@ -47,7 +46,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/list")
-    @RequiresRoles("admin")
+    @SaCheckRole("admin")
     public Result<?> list(@RequestParam(defaultValue = "1") Integer currentPage,
                           @RequestParam(defaultValue = "10") Integer pageSize,
                           @RequestParam(defaultValue ="") String keywords){
@@ -77,10 +76,5 @@ public class AdminController {
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-
-    @Autowired
-    public void setJwtUtils(JwtUtils jwtUtils) {
-        this.jwtUtils = jwtUtils;
     }
 }

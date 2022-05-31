@@ -10,10 +10,6 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-/**
- * 
- * @TableName accounts
- */
 @TableName(value ="accounts")
 @Data
 public class Account implements Serializable {
@@ -48,7 +44,9 @@ public class Account implements Serializable {
     private Integer level;
 
 
-    private Integer state;
+    private Integer state = 0;
+
+    private Integer role = 0;
 
     @TableLogic
     private Integer deleted;
@@ -58,13 +56,12 @@ public class Account implements Serializable {
 
     public Account(){}
 
-    public Account(Long id, String email, String username, String password, Integer level, Integer state) {
+    public Account(Long id, String email, String username, String password, Integer level) {
         this.id = id;
         this.email = email;
         this.username = username;
         this.password = password;
         this.level = level;
-        this.state = state;
     }
 
     @Override
@@ -100,17 +97,15 @@ public class Account implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getClass().getSimpleName());
-        builder.append(" [");
-        builder.append("Hash = ").append(hashCode());
-        builder.append(", id=").append(id);
-        builder.append(", email=").append(email);
-        builder.append(", username=").append(username);
-        builder.append(", password=").append(password);
-        builder.append(", level=").append(level);
-        builder.append(", serialVersionUID=").append(serialVersionUID);
-        builder.append("]");
-        return builder.toString();
+        return getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", id=" + id +
+                ", email=" + email +
+                ", username=" + username +
+                ", password=" + password +
+                ", level=" + level +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
     }
 }

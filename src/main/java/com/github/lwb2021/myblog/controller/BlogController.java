@@ -1,15 +1,17 @@
 package com.github.lwb2021.myblog.controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.spring.SpringMVCUtil;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.lwb2021.myblog.common.Result;
 import com.github.lwb2021.myblog.model.Blog;
-import com.github.lwb2021.myblog.model.User;
 import com.github.lwb2021.myblog.service.BlogService;
-import com.github.lwb2021.myblog.common.AccountProfile;
 import com.github.lwb2021.myblog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,17 +37,12 @@ import java.util.HashMap;
 @RequestMapping("/blog")
 public class BlogController {
     private BlogService blogService;
-    private UserService userService;
 
     @Autowired
     public void setBlogService(BlogService blogService) {
         this.blogService = blogService;
     }
 
-    @Autowired
-    public void setUserService(UserService userService){
-        this.userService = userService;
-    }
 
     @RequestMapping("/total")
     public Result<?> total(@RequestParam(defaultValue ="") String keywords){
@@ -89,9 +86,9 @@ public class BlogController {
         return blog;
     }
 
-//    @RequiresAuthentication
+    @SaCheckLogin
     @RequestMapping(value = "/create")
-    public Result<?> createBlog(@RequestBody HashMap<String, String> requestMap){
+    public SaResult createBlog(@RequestBody HashMap<String, String> requestMap){
         String newTitle = requestMap.get("newTitle");
         String newBlogContent = requestMap.get("newBlogContent");
         String tags = requestMap.get("tags");
@@ -115,11 +112,11 @@ public class BlogController {
         Blog blog = new Blog(newTitle, tags, id, 0, new Date(), 0, newBlogContent);
         blogService.save(blog);
 
-        return Result.succeed(1, "上传成功", blog);
+        return SaResult.get(200, "上传成功", blog);
     }
-//    @RequiresAuthentication
+    @SaCheckRole
     @RequestMapping(value = "/edit")
-    public Result<?> editBlog(@RequestBody HashMap<String, String> requestMap){
+    public SaResult editBlog(@RequestBody HashMap<String, String> requestMap){
         String newBlogContent = requestMap.get("newBlogContent");
         String newTitle = requestMap.get("newTitle");
         String tags = requestMap.get("tags");
@@ -133,7 +130,7 @@ public class BlogController {
         Blog blog = getBlogById(blogId);
 
         log.debug("Parameters Are OK, Finding User");
-        Result<?> result;
+        SaResult result;
         if ((result = checkIsAuthor(blog, "您不是博客的作者，无法修改")) != null) {
             return result;
         }
@@ -142,33 +139,34 @@ public class BlogController {
         blog.setTags(tags);
         blogService.saveOrUpdate(blog);
 
-        return Result.succeed(1, "修改成功", blog);
+        return SaResult.get(200, "修改成功", blog);
     }
 
-    public Result<?> checkIsAuthor(Blog blog, String message){
+    public SaResult checkIsAuthor(Blog blog, String message){
 
         long id = StpUtil.getLoginIdAsLong();
         log.info("User Found, ID:" + id);
 
         if(id != blog.getAuthorId()){
-            return Result.failed(-100, message, null);
+            SpringMVCUtil.getResponse().setStatus(400);
+            return SaResult.get(400, message, null);
         }
         return null;
     }
 //    @RequiresAuthentication
     @RequestMapping(value = "/delete")
-    public Result<?> deleteBlog(@RequestBody HashMap<String, String> requestMap){
+    public SaResult deleteBlog(@RequestBody HashMap<String, String> requestMap){
         Integer blogId = Integer.parseInt(requestMap.get("id"));
 
         Blog blog = getBlogById(blogId);
         log.debug("Parameters Are OK, Finding User");
-        Result<?> result;
+        SaResult result;
         if ((result = checkIsAuthor(blog, "您不是博客的作者，无法删除")) != null) {
             return result;
         }
 
         blogService.removeById(blogId);
-        return Result.succeed(1, "删除成功", null);
+        return SaResult.get(200, "删除成功", null);
     }
 }
 

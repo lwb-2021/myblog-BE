@@ -1,7 +1,7 @@
 package com.github.lwb2021.myblog.common.exceptions;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import com.github.lwb2021.myblog.common.Result;
-import org.apache.shiro.ShiroException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,8 +19,8 @@ public class GlobalExceptionHandler {
                 + runtimeException.getMessage(), null);
     }
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(ShiroException.class)
-    public Result<?> handle(ShiroException runtimeException){
+    @ExceptionHandler(NotLoginException.class)
+    public Result<?> handle(NotLoginException runtimeException){
         runtimeException.printStackTrace();
         return Result.failed(-104, runtimeException.getMessage(), null);
     }

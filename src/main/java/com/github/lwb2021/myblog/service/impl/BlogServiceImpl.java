@@ -14,7 +14,7 @@ import com.github.lwb2021.myblog.service.BlogService;
  * @since 2022-05-04 11:42:20
  */
 @Service
-@DS("myblog")
+@DS("my_blog")
 public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements BlogService {
 }
 
